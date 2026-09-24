@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="都廳大院 2 預售屋成交行情與房型、戶別、樓層統計。">
+  <meta name="theme-color" content="#f2efe7">
+  <title>都廳大院 2｜成交觀測</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --paper: #f2efe7;
+      --deep: #e8e3d8;
+      --ink: #18211d;
+      --muted: #6b716c;
+      --green: #174d3a;
+      --soft: #dbe5dc;
+      --gold: #b7823f;
+      --line: rgba(24, 33, 29, .16);
+      --white: #fbfaf6;
+      --shadow: 0 24px 70px rgba(45, 50, 43, .1);
+      --serif: "Noto Serif TC", "Songti TC", "PMingLiU", serif;
+      --sans: Inter, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: var(--sans);
+      line-height: 1.6;
+    }
+    body::before {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image: radial-gradient(rgba(24, 33, 29, .12) .55px, transparent .55px);
+      background-size: 7px 7px;
+      opacity: .18;
+      content: "";
+      pointer-events: none;
+    }
+    a { color: inherit; }
+    button { font: inherit; }
+    .shell { width: min(1180px, calc(100% - 48px)); margin: 0 auto; }
+    .site-header { border-bottom: 1px solid var(--line); }
+    .nav { display: flex; min-height: 76px; align-items: center; justify-content: space-between; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 700; letter-spacing: .08em; }
+    .brand-mark {
+      display: grid;
+      width: 38px;
+      height: 38px;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--green);
+      color: var(--white);
+      font-family: var(--serif);
+      font-size: 19px;
+    }
+    .nav-meta { color: var(--muted); font-size: 12px; letter-spacing: .08em; }
+    .nav-meta::before { display: inline-block; width: 7px; height: 7px; margin-right: 8px; border-radius: 50%; background: #4d926e; content: ""; }
+    .hero { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(280px, .55fr); gap: 64px; padding: 88px 0 72px; align-items: end; }
+    .eyebrow, .section-no { color: var(--gold); font-size: 11px; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+    h1 { max-width: 780px; margin: 22px 0 24px; font-family: var(--serif); font-size: clamp(54px, 8.2vw, 108px); font-weight: 600; letter-spacing: -.065em; line-height: .96; }
+    h1 span { color: var(--green); }
+    .hero-copy { max-width: 590px; margin: 0; color: var(--muted); font-size: 17px; }
+    .hero-stamp { position: relative; padding: 30px; border: 1px solid var(--line); background: rgba(251, 250, 246, .5); }
+    .hero-stamp::before { position: absolute; top: -5px; right: 24px; width: 54px; height: 10px; background: var(--gold); content: ""; }
+    .hero-stamp-label { color: var(--muted); font-size: 11px; letter-spacing: .12em; }
+    .hero-stamp strong { display: block; margin: 9px 0 14px; font-family: var(--serif); font-size: 26px; }
+    .hero-stamp p { margin: 0; color: var(--muted); font-size: 13px; }
+    .loading, .error { display: grid; min-height: 360px; place-items: center; border-top: 1px solid var(--line); color: var(--muted); text-align: center; }
+    .error strong { display: block; margin-bottom: 8px; color: #8c342d; font-size: 18px; }
+    .metrics { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+    .metric { padding: 32px 26px; border-right: 1px solid var(--line); }
+    .metric:first-child { padding-left: 0; }
+    .metric:last-child { border-right: 0; }
+    .metric-label { display: block; margin-bottom: 14px; color: var(--muted); font-size: 12px; }
+    .metric-value { font-family: var(--serif); font-size: clamp(31px, 4vw, 46px); font-weight: 600; line-height: 1; }
+    .metric-unit { margin-left: 5px; color: var(--muted); font-family: var(--sans); font-size: 12px; font-weight: 500; }
+    .metric-note { display: block; margin-top: 10px; color: var(--green); font-size: 11px; }
+    .metric-note.down { color: #9b5943; }
+    .section { padding: 88px 0; border-bottom: 1px solid var(--line); }
+    .section-head { display: flex; align-items: end; justify-content: space-between; gap: 32px; margin-bottom: 38px; }
+    .section h2 { margin: 8px 0 0; font-family: var(--serif); font-size: clamp(34px, 5vw, 54px); font-weight: 600; letter-spacing: -.04em; line-height: 1.1; }
+    .section-desc { max-width: 390px; margin: 0; color: var(--muted); font-size: 14px; }
+    .trend-grid { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(250px, .4fr); gap: 20px; }
+    .card { border: 1px solid var(--line); background: rgba(251, 250, 246, .62); box-shadow: var(--shadow); }
+    .chart-card { min-width: 0; padding: 26px 28px 20px; }
+    .card-label { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; color: var(--muted); font-size: 12px; }
+    .card-label span:last-child { color: var(--green); font-weight: 700; }
+    .chart-wrap { position: relative; height: 330px; }
+    canvas { width: 100%; height: 100%; }
+    .insights { display: grid; }
+    .insight { display: flex; min-height: 126px; padding: 23px; flex-direction: column; justify-content: space-between; border-bottom: 1px solid var(--line); }
+    .insight:last-child { border-bottom: 0; }
+    .insight span { color: var(--muted); font-size: 11px; letter-spacing: .08em; }
+    .insight strong { font-family: var(--serif); font-size: 23px; font-weight: 600; }
+    .room-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .room-card { position: relative; min-height: 245px; padding: 24px; overflow: hidden; border: 1px solid var(--line); background: var(--white); }
+    .room-card::after { position: absolute; right: -25px; bottom: -45px; color: var(--soft); font-family: var(--serif); font-size: 132px; line-height: 1; content: attr(data-rank); }
+    .room-type { position: relative; z-index: 1; font-family: var(--serif); font-size: 21px; }
+    .room-share { position: relative; z-index: 1; display: block; margin-top: 38px; font-family: var(--serif); font-size: 42px; line-height: 1; }
+    .room-meta { position: relative; z-index: 1; margin-top: 12px; color: var(--muted); font-size: 12px; }
+    .room-bar { position: absolute; right: 0; bottom: 0; left: 0; height: 5px; background: var(--deep); }
+    .room-bar span { display: block; height: 100%; background: var(--gold); }
+    .floor-card { padding: 28px; }
+    .floor-chart { height: 360px; }
+    .tabs { display: flex; gap: 7px; margin-bottom: 22px; overflow-x: auto; scrollbar-width: none; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab { padding: 9px 16px; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--muted); cursor: pointer; white-space: nowrap; transition: .2s ease; }
+    .tab:hover, .tab.active { border-color: var(--green); background: var(--green); color: var(--white); }
+    .table-card { overflow: hidden; }
+    .table-scroll { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 17px 20px; border-bottom: 1px solid var(--line); text-align: right; white-space: nowrap; }
+    th:first-child, td:first-child { text-align: left; }
+    th { background: var(--green); color: rgba(255,255,255,.72); font-size: 11px; font-weight: 600; letter-spacing: .06em; }
+    td { font-variant-numeric: tabular-nums; }
+    tbody tr:last-child td { border-bottom: 0; }
+    tbody tr:hover { background: rgba(23, 77, 58, .05); }
+    td.price { color: var(--green); font-weight: 700; }
+    footer { display: flex; justify-content: space-between; gap: 20px; padding: 36px 0 50px; color: var(--muted); font-size: 12px; }
+    footer a { text-underline-offset: 3px; }
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; gap: 38px; padding-top: 64px; }
+      .hero-stamp { max-width: 420px; }
+      .metrics { grid-template-columns: repeat(2, 1fr); }
+      .metric:nth-child(2) { border-right: 0; }
+      .metric:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+      .metric:nth-child(3) { padding-left: 0; }
+      .trend-grid { grid-template-columns: 1fr; }
+      .insights { grid-template-columns: repeat(3, 1fr); }
+      .insight { min-height: 118px; border-right: 1px solid var(--line); border-bottom: 0; }
+      .insight:last-child { border-right: 0; }
+      .room-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 580px) {
+      .shell { width: min(100% - 28px, 1180px); }
+      .nav { min-height: 64px; }
+      .nav-meta { font-size: 0; }
+      .hero { padding: 54px 0; }
+      h1 { font-size: 52px; }
+      .hero-copy { font-size: 15px; }
+      .metrics { margin-inline: -14px; padding-inline: 14px; }
+      .metric { padding: 24px 14px; }
+      .section { padding: 64px 0; }
+      .section-head { display: block; }
+      .section-desc { margin-top: 16px; }
+      .chart-card, .floor-card { padding: 20px 14px; }
+      .chart-wrap { height: 270px; }
+      .insights { grid-template-columns: 1fr; }
+      .insight { min-height: 100px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .room-grid { grid-template-columns: 1fr; }
+      .room-card { min-height: 190px; }
+      .floor-chart { height: 300px; }
+      th, td { padding: 14px; }
+      footer { display: block; }
+      footer span { display: block; margin-top: 5px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="shell nav" aria-label="主要導覽">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">都</span>都廳大院 2</div>
+      <div class="nav-meta">成交資料持續更新</div>
+    </nav>
+  </header>
+  <main>
+    <section class="shell hero">
+      <div><div class="eyebrow">Market Observation · New Taipei</div><h1>成交行情，<br><span>清晰可見。</span></h1><p class="hero-copy">以實際登錄資料整理成交量、房型與樓層價格，提供一份簡潔、持續更新的市場觀測。</p></div>
+      <aside class="hero-stamp"><span class="hero-stamp-label">OBSERVATION PERIOD</span><strong id="heroPeriod">資料載入中</strong><p>月份依民國年「買賣日期」統計<br>價格單位為新台幣萬元／坪</p></aside>
+    </section>
+    <div id="dashboard" class="shell" aria-live="polite"><div class="loading">正在整理最新成交資料…</div></div>
+  </main>
+  <footer class="shell"><div>都廳大院 2 · 成交觀測</div><span>資料來源：<a href="report.md">report.md</a></span></footer>
+  <script>
+    const dashboard = document.querySelector("#dashboard");
+    const escapeHtml = (value) => String(value).replace(/[&<>'"]/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"})[char]);
+    const number = (value) => Number(String(value).replace(/,/g, ""));
+
+    function parseReport(markdown) {
+      const total = Number(markdown.match(/共\s*(\d+)\s*筆成交資料/)?.[1]);
+      const sections = {};
+      for (const chunk of markdown.split(/^##\s+/m).slice(1)) {
+        const [title, ...lines] = chunk.trim().split("\n");
+        const tableLines = lines.filter((line) => /^\|.*\|$/.test(line.trim()));
+        if (tableLines.length < 3) continue;
+        const parseRow = (line) => line.slice(1, -1).split("|").map((cell) => cell.trim());
+        sections[title.trim()] = { headers: parseRow(tableLines[0]), rows: tableLines.slice(2).map(parseRow) };
+      }
+      const required = ["每月成交筆數", "完整房型統計", "房間數統計", "戶別統計", "樓層統計"];
+      if (!total || required.some((key) => !sections[key])) throw new Error("report.md 格式與預期不符");
+      return { total, sections };
+    }
+
+    function buildTable(section) {
+      const head = section.headers.map((item) => `<th scope="col">${escapeHtml(item)}</th>`).join("");
+      const body = section.rows.map((row) => `<tr>${row.map((item, index) => `<td${index >= 2 ? ' class="price"' : ""}>${escapeHtml(item)}</td>`).join("")}</tr>`).join("");
+      return `<div class="table-scroll"><table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table></div>`;
+    }
+
+    function render(data) {
+      const monthly = data.sections["每月成交筆數"];
+      const roomTypes = data.sections["完整房型統計"];
+      const units = data.sections["戶別統計"];
+      const floors = data.sections["樓層統計"];
+      const months = monthly.rows.map((row) => row[0]);
+      const latest = monthly.rows.at(-1);
+      const previous = monthly.rows.at(-2);
+      const change = (number(latest[1]) - number(previous[1])) / number(previous[1]) * 100;
+      const busiest = monthly.rows.reduce((best, row) => number(row[1]) > number(best[1]) ? row : best);
+      const topType = roomTypes.rows.reduce((best, row) => number(row[1]) > number(best[1]) ? row : best);
+      const highestUnit = units.rows.reduce((best, row) => number(row[2]) > number(best[2]) ? row : best);
+      const highestFloor = floors.rows.reduce((best, row) => number(row[2]) > number(best[2]) ? row : best);
+      const average = roomTypes.rows.reduce((sum, row) => sum + number(row[1]) * number(row[2]), 0) / data.total;
+      document.querySelector("#heroPeriod").textContent = `${months[0]} — ${months.at(-1)}`;
+      dashboard.innerHTML = `
+        <section class="metrics" aria-label="成交摘要">
+          <article class="metric"><span class="metric-label">累計成交</span><strong class="metric-value">${data.total}<small class="metric-unit">筆</small></strong><span class="metric-note">完整登錄樣本</span></article>
+          <article class="metric"><span class="metric-label">整體平均單價</span><strong class="metric-value">${average.toFixed(1)}<small class="metric-unit">萬／坪</small></strong><span class="metric-note">依各房型加權</span></article>
+          <article class="metric"><span class="metric-label">最新月份成交</span><strong class="metric-value">${escapeHtml(latest[1])}<small class="metric-unit">筆</small></strong><span class="metric-note ${change < 0 ? "down" : ""}">較前月 ${change >= 0 ? "+" : ""}${change.toFixed(1)}%</span></article>
+          <article class="metric"><span class="metric-label">觀測期間</span><strong class="metric-value">${months.length}<small class="metric-unit">個月</small></strong><span class="metric-note">${escapeHtml(months[0])} 起</span></article>
+        </section>
+        <section class="section">
+          <div class="section-head"><div><span class="section-no">01 · Volume</span><h2>市場成交節奏</h2></div><p class="section-desc">逐月觀察交易熱度，辨識成交釋出的高峰與近期步調。</p></div>
+          <div class="trend-grid"><article class="card chart-card"><div class="card-label"><span>每月成交筆數</span><span>${escapeHtml(months[0])}—${escapeHtml(months.at(-1))}</span></div><div class="chart-wrap"><canvas id="volumeChart" role="img" aria-label="每月成交筆數長條圖"></canvas></div></article><aside class="card insights"><div class="insight"><span>成交高峰</span><strong>${escapeHtml(busiest[0])} · ${escapeHtml(busiest[1])} 筆</strong></div><div class="insight"><span>主力房型</span><strong>${escapeHtml(topType[0])}</strong></div><div class="insight"><span>戶別最高均價</span><strong>${escapeHtml(highestUnit[0])} · ${escapeHtml(highestUnit[2])}</strong></div></aside></div>
+        </section>
+        <section class="section">
+          <div class="section-head"><div><span class="section-no">02 · Typology</span><h2>房型成交輪廓</h2></div><p class="section-desc">成交占比與平均單價並列，快速掌握市場中的主要產品組成。</p></div>
+          <div class="room-grid">${roomTypes.rows.map((row, index) => { const share = number(row[1]) / data.total * 100; return `<article class="room-card" data-rank="0${index + 1}"><strong class="room-type">${escapeHtml(row[0])}</strong><span class="room-share">${share.toFixed(1)}%</span><div class="room-meta">${escapeHtml(row[1])} 筆成交 · 均價 ${escapeHtml(row[2])} 萬／坪</div><div class="room-bar"><span style="width:${share}%"></span></div></article>`; }).join("")}</div>
+        </section>
+        <section class="section">
+          <div class="section-head"><div><span class="section-no">03 · Floor</span><h2>樓層價格曲線</h2></div><p class="section-desc">最高平均單價出現在 ${escapeHtml(highestFloor[0])} 樓，為 ${escapeHtml(highestFloor[2])} 萬／坪。</p></div>
+          <article class="card floor-card"><div class="card-label"><span>各樓層平均單價</span><span>萬元／坪</span></div><div class="chart-wrap floor-chart"><canvas id="floorChart" role="img" aria-label="各樓層平均單價折線圖"></canvas></div></article>
+        </section>
+        <section class="section">
+          <div class="section-head"><div><span class="section-no">04 · Details</span><h2>完整統計資料</h2></div><p class="section-desc">切換統計維度，查看成交筆數、平均單價與單價中位數。</p></div>
+          <div class="tabs" role="tablist" aria-label="統計分類"><button class="tab active" type="button" role="tab" aria-selected="true" data-section="完整房型統計">完整房型</button><button class="tab" type="button" role="tab" aria-selected="false" data-section="房間數統計">房間數</button><button class="tab" type="button" role="tab" aria-selected="false" data-section="戶別統計">戶別</button><button class="tab" type="button" role="tab" aria-selected="false" data-section="樓層統計">樓層</button></div>
+          <div id="detailTable" class="card table-card">${buildTable(roomTypes)}</div>
+        </section>`;
+      dashboard.querySelectorAll(".tab").forEach((button) => button.addEventListener("click", () => {
+        dashboard.querySelectorAll(".tab").forEach((tab) => { const active = tab === button; tab.classList.toggle("active", active); tab.setAttribute("aria-selected", active); });
+        document.querySelector("#detailTable").innerHTML = buildTable(data.sections[button.dataset.section]);
+      }));
+      const redraw = () => { drawBars(document.querySelector("#volumeChart"), monthly.rows); drawLine(document.querySelector("#floorChart"), floors.rows); };
+      redraw();
+      let resizeTimer;
+      window.addEventListener("resize", () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(redraw, 120); });
+    }
+
+    function setupCanvas(canvas) {
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = Math.round(rect.width * ratio); canvas.height = Math.round(rect.height * ratio);
+      const ctx = canvas.getContext("2d"); ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+      return { ctx, width: rect.width, height: rect.height };
+    }
+    function drawGrid(ctx, width, height, pad, min, max, digits = 0) {
+      ctx.font = "11px sans-serif"; ctx.textBaseline = "middle";
+      for (let i = 0; i <= 4; i++) {
+        const y = pad.top + (height - pad.top - pad.bottom) * i / 4;
+        ctx.strokeStyle = "rgba(24,33,29,.11)"; ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(width - pad.right, y); ctx.stroke();
+        ctx.fillStyle = "#777b76"; ctx.textAlign = "right"; ctx.fillText((max - (max - min) * i / 4).toFixed(digits), pad.left - 9, y);
+      }
+    }
+    function drawBars(canvas, rows) {
+      if (!canvas) return;
+      const { ctx, width, height } = setupCanvas(canvas);
+      const pad = { top: 18, right: 8, bottom: 42, left: 40 };
+      const values = rows.map((row) => number(row[1]));
+      const max = Math.ceil(Math.max(...values) / 20) * 20;
+      const plotW = width - pad.left - pad.right, plotH = height - pad.top - pad.bottom;
+      drawGrid(ctx, width, height, pad, 0, max);
+      const slot = plotW / rows.length, barW = Math.max(5, Math.min(25, slot * .56));
+      rows.forEach((row, index) => {
+        const barH = values[index] / max * plotH, x = pad.left + slot * index + (slot - barW) / 2, y = pad.top + plotH - barH;
+        ctx.fillStyle = index === rows.length - 1 ? "#b7823f" : "#174d3a"; ctx.beginPath(); ctx.roundRect(x, y, barW, barH, [4, 4, 0, 0]); ctx.fill();
+        if (index % (width < 620 ? 3 : 2) === 0 || index === rows.length - 1) { ctx.save(); ctx.translate(x + barW / 2, height - 17); ctx.rotate(-.42); ctx.fillStyle = "#777b76"; ctx.font = "10px sans-serif"; ctx.textAlign = "right"; ctx.fillText(row[0], 0, 0); ctx.restore(); }
+      });
+    }
+    function drawLine(canvas, rows) {
+      if (!canvas) return;
+      const { ctx, width, height } = setupCanvas(canvas);
+      const pad = { top: 24, right: 18, bottom: 42, left: 46 };
+      const values = rows.map((row) => number(row[2]));
+      const min = Math.floor(Math.min(...values) - 1), max = Math.ceil(Math.max(...values) + 1);
+      const plotW = width - pad.left - pad.right, plotH = height - pad.top - pad.bottom;
+      drawGrid(ctx, width, height, pad, min, max, 1);
+      const points = rows.map((row, index) => ({ x: pad.left + plotW * index / (rows.length - 1), y: pad.top + (max - values[index]) / (max - min) * plotH }));
+      const fill = ctx.createLinearGradient(0, pad.top, 0, height - pad.bottom); fill.addColorStop(0, "rgba(23,77,58,.22)"); fill.addColorStop(1, "rgba(23,77,58,0)");
+      ctx.beginPath(); ctx.moveTo(points[0].x, height - pad.bottom); points.forEach((point) => ctx.lineTo(point.x, point.y)); ctx.lineTo(points.at(-1).x, height - pad.bottom); ctx.closePath(); ctx.fillStyle = fill; ctx.fill();
+      ctx.beginPath(); points.forEach((point, index) => index ? ctx.lineTo(point.x, point.y) : ctx.moveTo(point.x, point.y)); ctx.strokeStyle = "#174d3a"; ctx.lineWidth = 2.2; ctx.lineJoin = "round"; ctx.stroke();
+      points.forEach((point, index) => { ctx.beginPath(); ctx.arc(point.x, point.y, index === points.length - 1 ? 4 : 2.5, 0, Math.PI * 2); ctx.fillStyle = index === points.length - 1 ? "#b7823f" : "#174d3a"; ctx.fill(); if (index % (width < 620 ? 4 : 2) === 0 || index === points.length - 1) { ctx.fillStyle = "#777b76"; ctx.font = "10px sans-serif"; ctx.textAlign = "center"; ctx.fillText(`${rows[index][0]}F`, point.x, height - 18); } });
+    }
+    fetch("report.md", { cache: "no-store" })
+      .then((response) => { if (!response.ok) throw new Error(`無法讀取 report.md（${response.status}）`); return response.text(); })
+      .then(parseReport).then(render)
+      .catch((error) => { dashboard.innerHTML = `<div class="error"><div><strong>資料載入失敗</strong>${escapeHtml(error.message)}<br><small>請透過 GitHub Pages 或本機網頁伺服器開啟。</small></div></div>`; });
+  </script>
+</body>
+</html>
